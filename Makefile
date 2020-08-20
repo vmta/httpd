@@ -17,7 +17,7 @@ endif
 .PHONY: destroy
 destroy: ## Stop and remove container, image
 ifneq ($(ID_IMG),)
-	@$(MAKE) rmi
+	@$(MAKE) -s rmi
 endif
 
 
