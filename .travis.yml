@@ -14,14 +14,18 @@ jobs:
     - stage: build
       name: 'build'
       language: minimal
-      script: make build
+      script:
+        - make build
 
     - stage: push
       name: 'push'
       language: minimal
       script:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         - make build
+      after_success:
         - docker images
-        - docker tag py-httpd "$DOCKER_USERNAME"/py-httpd:"$TRAVIS_COMMIT"
-        - docker push "$DOCKER_USERNAME"/py-httpd:"$TRAVIS_COMMIT"
+        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        - docker tag py-httpd $DOCKER_USERNAME/py-httpd
+        - docker tag py-httpd $DOCKER_USERNAME/py-httpd:$TRAVIS_BUILD_NUMBER
+        - docker push $DOCKER_USERNAME/py-httpd
+        - docker push $DOCKER_USERNAME/py-httpd:$TRAVIS_BUILD_NUMBER
