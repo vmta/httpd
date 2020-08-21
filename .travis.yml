@@ -1,0 +1,26 @@
+dist: focal
+os: linux
+language: minimal
+arch: amd64
+
+stages:
+  - build
+  - push
+
+jobs:
+
+  include:
+
+    - stage: build
+      name: 'build'
+      language: minimal
+      script: 'make build'
+
+    - stage: push
+      name: 'push'
+      language: minimal
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker images
+        - docker tag py-httpd "$DOCKER_USERNAME"/py-httpd:"$TRAVIS_COMMIT"
+        - docker push "$DOCKER_USERNAME"/py-httpd:"$TRAVIS_COMMIT"
